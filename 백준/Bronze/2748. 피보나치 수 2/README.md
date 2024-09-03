@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/2748) 
 
-### 성능 요약
-
-메모리: 17736 KB, 시간: 164 ms
-
 ### 분류
 
 다이나믹 프로그래밍, 수학
-
-### 제출 일자
-
-2024년 9월 3일 23:40:30
 
 ### 문제 설명
 
@@ -34,3 +26,38 @@
 
  <p>첫째 줄에 n번째 피보나치 수를 출력한다.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // 코드를 작성해주세요
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        
+-        int dp[] = new int [n+1];
++        long dp[] = new long [n+1];
+        
+        dp[1]=1;
+        if(n>=2){
+            dp[2]=1;
+            for(int i=3; i<=n; i++){
+                dp[i] = dp[i-2] + dp[i-1];
+            }
+        }
+        
+        System.out.println(dp[n]);
+    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. n이 1일때 dp[2]하면 에러
+2. 주어진 조건을 잘 보고 int인지 long인지 자료형 잘 생각하기
