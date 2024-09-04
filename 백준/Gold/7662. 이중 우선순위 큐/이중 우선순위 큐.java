@@ -11,10 +11,7 @@ public class Main {
         StringBuilder sb = new StringBuilder();
         
         while(t-- > 0){
-            PriorityQueue<Integer> uq = new PriorityQueue<>();
-            // 내림차순
-            PriorityQueue<Integer> dq = new PriorityQueue<>(Collections.reverseOrder());
-            Map<Integer, Integer> map = new HashMap<>();
+            TreeMap<Integer, Integer> map = new TreeMap<>();
             int k = Integer.valueOf(br.readLine());
             while(k-- > 0){
                 String input[] = br.readLine().split(" ");
@@ -23,59 +20,37 @@ public class Main {
                 
                 if(com.equals("I")){
                     map.put(what, map.getOrDefault(what, 0)+1);
-                    uq.add(what);
-                    dq.add(what);
                 }else{
-                    if(map.size()==0){
-                        continue;
-                    }
-                    PriorityQueue<Integer> q;
+                    if(map.size()==0) continue;
+                    
+                    int key;
+                    // Entry<Integer, Integer> entry;
                     if(what == -1){
-                        q = uq;
+                        key = map.firstKey();
+                        // entry = map.firstEntry();
                     }else{
-                        q = dq;
+                        key = map.lastKey();
+                        // entry = map.lastEntry();
                     }
                     
-                    removeTarget(map, q);
-                    
-                    // if(map.size() != 0){
-                        // if(what == -1){
-                            // int uq.poll();
-                            // dq.remove(uq.poll());
-                        // }else{
-                            // uq.remove(dq.poll());
-                        // }
-                    // }
+                    if(map.get(key) == 1){
+                        map.remove(key);
+                    }else{
+                        map.put(key, map.get(key)-1);
+                        // map.replace(entry.getKey(), entry.getValue(), entry.getValue()-1);
+                    }
                 }
             }
             
-            if(map.size()==0){
+            
+            if(map.size() == 0){
                 System.out.println("EMPTY");
             }else{
-                int n = removeTarget(map, dq);
-                System.out.println(n + " " + (map.size() > 0 ? removeTarget(map, uq) : n));
-            }   
-        }
-    }
-    
-    public static int removeTarget(Map<Integer, Integer> map, PriorityQueue<Integer> q){
-        int num;
-        while(true){ // 하나의 q에서만 삭제하니까 다른 쪽에서는 남아있을 수 있으므로 반복문으로 맞춰주는 과정
-            num = q.poll();
-            int cnt = map.getOrDefault(num, 0);
-            if(cnt == 0){
-                continue;
+                System.out.println(map.lastKey() + " " + map.firstKey());
             }
-            
-            if(cnt == 1){
-                map.remove(num);
-            }else{
-                map.put(num, map.get(num)-1);
-            }
-            
-            break;
         }
         
-        return num;
+        
+        
     }
 }
