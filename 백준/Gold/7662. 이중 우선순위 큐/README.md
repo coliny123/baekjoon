@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/7662) 
 
-### 성능 요약
-
-메모리: 412328 KB, 시간: 2828 ms
-
 ### 분류
 
 자료 구조, 우선순위 큐, 트리를 사용한 집합과 맵
-
-### 제출 일자
-
-2024년 9월 4일 12:00:09
 
 ### 문제 설명
 
@@ -32,3 +24,102 @@
 
  <p>출력은 표준출력을 사용한다. 각 테스트 데이터에 대해, 모든 연산을 처리한 후 Q에 남아 있는 값 중 최댓값과 최솟값을 출력하라. 두 값은 한 줄에 출력하되 하나의 공백으로 구분하라. 만약 Q가 비어있다면 ‘EMPTY’를 출력하라.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException{
+        // 코드를 작성해주세요
+        BufferedReader br = new BufferedReader(new InputStreamReader(System. in));
+        int t = Integer.valueOf(br.readLine());
+        
+        // 오름차순
+-        PriorityQueue<Integer> uq = new PriorityQueue<>();
+-        // 내림차순
+-        PriorityQueue<Integer> dq = new PriorityQueue<>(Collections.reverseOrder());
+-        Map<Integer, Integer> map = new HashMap<>();
+        StringBuilder sb = new StringBuilder();
+        
+        while(t-- > 0){
++            PriorityQueue<Integer> uq = new PriorityQueue<>();
++            // 내림차순
++            PriorityQueue<Integer> dq = new PriorityQueue<>(Collections.reverseOrder());
++            Map<Integer, Integer> map = new HashMap<>();
+            int k = Integer.valueOf(br.readLine());
+            while(k-- > 0){
+                String input[] = br.readLine().split(" ");
+                String com = input[0];
+                int what = Integer.valueOf(input[1]);
+                
+                if(com.equals("I")){
+                    map.put(what, map.getOrDefault(what, 0)+1);
+                    uq.add(what);
+                    dq.add(what);
+                }else{
+                    if(map.size()==0){
+                        continue;
+                    }
+                    PriorityQueue<Integer> q;
+                    if(what == -1){
+                        q = uq;
+                    }else{
+                        q = dq;
+                    }
+                    
+                    removeTarget(map, q);
+                    
+                    // if(map.size() != 0){
+                        // if(what == -1){
+                            // int uq.poll();
+                            // dq.remove(uq.poll());
+                        // }else{
+                            // uq.remove(dq.poll());
+                        // }
+                    // }
+                }
+            }
+            
+            if(map.size()==0){
+                System.out.println("EMPTY");
+            }else{
+                int n = removeTarget(map, dq);
+                System.out.println(n + " " + (map.size() > 0 ? removeTarget(map, uq) : n));
+            }   
+        }
+    }
+    
+    public static int removeTarget(Map<Integer, Integer> map, PriorityQueue<Integer> q){
+        int num;
+        while(true){ // 하나의 q에서만 삭제하니까 다른 쪽에서는 남아있을 수 있으므로 반복문으로 맞춰주는 과정
+            num = q.poll();
+            int cnt = map.getOrDefault(num, 0);
+            if(cnt == 0){
+                continue;
+            }
+            
+            if(cnt == 1){
+                map.remove(num);
+            }else{
+                map.put(num, map.get(num)-1);
+            }
+            
+            break;
+        }
+        
+        return num;
+    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. 이중 우선순위 큐라서 처음에는 우선순위 큐 두 개를 만들어서 dq.remove(uq.poll());로 풀려고 했다. 그러나 remove 함수의 경우 순차적으로 접근하여 equals == true일 경우 제거하기 때문에 O(N) 이기 때문에 시간초과가 발생한다.
+2. 그래서 찾아보았더니 map을 사용해서 전체적으로 숫자와 갯수를 관리하는 방법이 있었다. + TreeMap도 있음
+2-1) removeTarget을 할 때 해당하는 큐에서 poll한뒤 map에서도 처리하면 될 것이라고 생각했지만 하나의 큐에서만 제거되기 때문에 만약 map에 존재하지 않을 경우 {5, 5, 5} 가 들어간 경우 uq와 dq 모두 동일하게 가지고 있지만 map에서 삭제시 반대 큐와 동기화 할 수 없으므로   sync를 맞추기 위해 계속 제거해주는 과정이 필요하므로 반복문이 필요했다.
