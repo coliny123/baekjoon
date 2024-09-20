@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/8979) 
 
-### 성능 요약
-
-메모리: 15484 KB, 시간: 156 ms
-
 ### 분류
 
 구현, 정렬
-
-### 제출 일자
-
-2024년 6월 22일 18:18:49
 
 ### 문제 설명
 
@@ -36,3 +28,88 @@
 
  <p>출력은 단 한 줄이며, 입력받은 국가 K의 등수를 하나의 정수로 출력한다. 등수는 반드시 문제에서 정의된 방식을 따라야 한다. </p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+
+
+class Country implements Comparable<Country>{
+    int idx, gold, silver, bronze, rank;
+    
+    public Country(int idx, int gold, int silver, int bronze, int rank){
+        this.idx=idx;
+        this.gold=gold;
+        this.silver=silver;
+        this.bronze=bronze;
+        this.rank=rank;
+    }
+    
+    @Override
+    public int compareTo(Country x){
+        if(gold == x.gold){
+            if(silver == x.silver){
+                return x.bronze - bronze;
+            }else{
+                return x.silver - silver;
+            }
+        }else{
+            return x.gold - gold;
+        }
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        // 코드를 작성해주세요
+        Scanner sc = new Scanner(System.in);
+        int N = sc.nextInt();
+        int K = sc.nextInt();
+        
+        Country medals[] = new Country[N];
+        
+        for(int i=0; i<N; i++){
+            int idx = sc.nextInt();
+            int gold = sc.nextInt();
+            int silver = sc.nextInt();
+            int bronze = sc.nextInt();
+            medals[i] = new Country(idx, gold, silver, bronze, 1);
+        }
+        
+        Arrays.sort(medals);
+        
+-        int ranking=1;
+-        for(int i=0; i<N-1; i++){
+-            Country cur = medals[i];
+-            Country nx= medals[i+1];
++        for(int i=1; i<N; i++){
++            Country cur = medals[i-1];
++            Country nx= medals[i];
+            if(cur.gold == nx.gold && cur.silver == nx.silver && cur.bronze == nx.bronze){
+                nx.rank = cur.rank;
+            }else{
+-                nx.rank = cur.rank+1;
++                nx.rank = i+1;
+            }
+-            
+-            if(cur.idx == K){
+-                System.out.println(cur.rank);
++        }
++
++        for(int i=0; i<N; i++){
++            if(medals[i].idx == K){
++                System.out.println(medals[i].rank);
+                break;
+            }
+        }
++        
+    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. ranking 재할당 할 때 2등과 3등이 금은동이 모두 같은 경우 둘 다 2등이 되고 4등은 그대로 4등이기 때문에 for문의 i로 ranking을 부여한다.
