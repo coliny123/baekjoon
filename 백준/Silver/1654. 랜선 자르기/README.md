@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/1654) 
 
-### 성능 요약
-
-메모리: 17520 KB, 시간: 148 ms
-
 ### 분류
 
 이분 탐색, 매개 변수 탐색
-
-### 제출 일자
-
-2024년 7월 11일 17:34:04
 
 ### 문제 설명
 
@@ -30,3 +22,64 @@
 
  <p>첫째 줄에 N개를 만들 수 있는 랜선의 최대 길이를 센티미터 단위의 정수로 출력한다.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+
+public class Main {
+    public static int N, K;
+-    public static int nums[];
++    public static long nums[];
+    
+    public static void main(String[] args) {
+        // 코드를 작성해주세요
+        Scanner sc = new Scanner(System.in);
+        
+        K = sc.nextInt();
+        N = sc.nextInt();
+        
+-        nums = new int[K];
++        nums = new long[K];
+        
+        for(int i=0; i<K; i++){
+-            nums[i] = sc.nextInt();
++            nums[i] = sc.nextLong();
+        }
+        
+        Arrays.sort(nums);
+        
+        System.out.println(search(nums, 1, nums[K-1], N));
+        
+    }
+    
+-    public static int search(int nums[], int min, int max, int target){
++    public static long search(long nums[], long min, long max, int target){
+        while(min <= max){
+-            int mid = (min + max) / 2;
++            long mid = (min + max) / 2;
+            int cnt = 0;
+            for(int i=0; i<K; i++){
+                cnt += nums[i] / mid;
+            }
+            
+            // System.out.println(min + " " + max);
+            if(cnt >= target){
+                min = mid+1;
+            }else{
+                max = mid-1;
+            }
+        }
+        
+        return min-1;
+    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. min + max가 int 자료형을 넘어가기 때문에 long 형으로 변경
