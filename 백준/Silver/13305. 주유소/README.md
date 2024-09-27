@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/13305) 
 
-### 성능 요약
-
-메모리: 175756 KB, 시간: 940 ms
-
 ### 분류
 
 그리디 알고리즘
-
-### 제출 일자
-
-2024년 9월 27일 11:07:06
 
 ### 문제 설명
 
@@ -36,3 +28,49 @@
 
  <p>표준 출력으로 제일 왼쪽 도시에서 제일 오른쪽 도시로 가는 최소 비용을 출력한다. </p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // 코드를 작성해주세요
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        
+-        int dists[] = new int[n-1];
++        long dists[] = new long[n-1];
+        int costs[] = new int[n];
+        
+        for(int i=0; i<n-1; i++){
+            dists[i] = sc.nextInt();
+        }
+        
+        long sum=0;
+-        int min = Integer.MAX_VALUE;
++        long min = Integer.MAX_VALUE;
+        for(int i=0; i<n-1; i++){
+            int cost = sc.nextInt();
+            // System.out.println(min + " " + cost + " " + sum);
+            if(min >= cost){
+                min = cost;
+            }
+            sum += dists[i]*min;
+        }
+        
++        
++
+        System.out.println(sum);
+    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. long += int * int 의 경우 int*int가 오버플로우 나면 제대로 값이 전달이 안된다.
+그래서 long += long * long 타입으로 바꿔줌
