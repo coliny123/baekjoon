@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/2295) 
 
-### 성능 요약
-
-메모리: 61060 KB, 시간: 464 ms
-
 ### 분류
 
 이분 탐색, 자료 구조, 해시를 사용한 집합과 맵, 중간에서 만나기
-
-### 제출 일자
-
-2024년 10월 4일 14:45:20
 
 ### 문제 설명
 
@@ -28,3 +20,65 @@
 
  <p>우리가 x번째 수, y번째 수, z번째 수를 더해서 k번째 수를 만들었다라고 하자. 위의 예제에서 2+3+5=10의 경우는 x, y, z, k가 차례로 1, 2, 3, 4가 되며, 최적해의 경우는 2, 3, 4, 5가 된다. k번째 수가 최대가 되도록 하는 것이 목적이다. x, y, z, k가 서로 같아도 된다. 이때, k번째 수를 출력하면 된다.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // 코드를 작성해주세요
+        Scanner sc = new Scanner(System.in);
+        int N = sc.nextInt();
+        
+        int[] nums = new int[N];
+        for(int i=0; i<N; i++){
+            nums[i] = sc.nextInt();
+        }
+        Set<Integer> set = new HashSet<>();
+        for(int i=0; i<N; i++){
+            for(int j=i; j<N; j++){
+                set.add(nums[i] + nums[j]);
+            }
+        }
+        
++        int[] sum = set.stream().mapToInt(i->i).toArray();
++        
++        Arrays.sort(sum);
++        
+        int max = 0;
+        for(int i=0; i<N; i++){
+-            for(int j=i; j<N; j++){
+-                if(set.contains(nums[j] - nums[i])){
+-                    max = Math.max(max, nums[j]);
++            for(int j=0; j<N; j++){
++                int target = nums[i] - nums[j];
++                if(Arrays.binarySearch(sum, target) > -1){
++                    max = Math.max(max, nums[i]);
+                }
+            }
+        }
+        
+        System.out.println(max);
+        
+    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+set과 이분탐색 둘 다 풀 수 있다.
+핵심 아이디어는 x+y+z=k를 x+y=k-z로 바꾸는 과정
+두 방법 모두 초기에 x+y의 조합이 필요하다.
+
+1. set
+x+y를 구하는 2중 for문으로 모든 조합을 구한뒤 k-z를 위해 다시 한 번 2중 for문을 돌면서 set에 저장된 x+y의 값들중 k-z와 일치하는 값이 있는지 체크한다.
+그중 k값은 nums[j]중 가장 큰 값을 max로 구하면 된다.
+
+2. 이분탐색은 Arrays의 binarySearch 함수를 사용해서 탐색한다. 그렇기 때문에 sum 배열을 정렬하는 과정이 필수적이다.
+탐색시 target이 없으면 음수를 리턴한다. (5를 찾는데 없으면 -5 리턴)
+ 
