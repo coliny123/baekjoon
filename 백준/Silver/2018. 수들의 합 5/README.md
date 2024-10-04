@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/2018) 
 
-### 성능 요약
-
-메모리: 17720 KB, 시간: 196 ms
-
 ### 분류
 
 수학, 두 포인터
-
-### 제출 일자
-
-2024년 10월 4일 09:44:01
 
 ### 문제 설명
 
@@ -30,3 +22,49 @@
 
  <p>입력된 자연수 N을 몇 개의 연속된 자연수의 합으로 나타내는 가지수를 출력하시오</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // 코드를 작성해주세요
+        
+        Scanner sc = new Scanner(System.in);
+        
+        int N = sc.nextInt();
+        
+        int cnt = 0;
+        int lt = 1;
+        int rt = 1;
+-        int sum=1;
++        int sum = 1;
+        while(lt <= rt){
++            if(sum == N){
++                cnt++;
++            }
++            
+            if(N >= sum){
+                sum += ++rt;
+            }else{
+                sum -= lt++;
+            };
+-            
+-            if(sum == N){
+-                cnt++;
+-            }
+        }        
+        
+        System.out.println(cnt);
+    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. 초기, lt와 rt를 1로 두고 sum을 1로 두었을 때 N이 1인 경우를 카운트하기 위해 cnt++해주는 if문을 투 포인터의 증가 전에 놔서 cnt 처리
