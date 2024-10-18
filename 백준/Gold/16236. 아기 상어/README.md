@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/16236) 
 
-### 성능 요약
-
-메모리: 18584 KB, 시간: 196 ms
-
 ### 분류
 
 너비 우선 탐색, 그래프 이론, 그래프 탐색, 구현, 시뮬레이션
-
-### 제출 일자
-
-2024년 10월 18일 14:54:49
 
 ### 문제 설명
 
@@ -59,3 +51,166 @@
 
  <p>첫째 줄에 아기 상어가 엄마 상어에게 도움을 요청하지 않고 물고기를 잡아먹을 수 있는 시간을 출력한다.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+
++class Node implements Comparable<Node>{
++    int x, y, step;
++    
++    public Node(int x, int y, int step){
++        this.x=x;
++        this.y=y;
++        this.step=step;
++    }
++    
++    @Override
++    public int compareTo(Node o){
++        if(step == o.step){
++            if(x == o.x){
++                return y - o.y;
++            }else{
++                return x - o.x;
++            }
++        }else{
++            return step - o.step;
++        }
++    }
++}
++
+public class Main {
+    public static int N;
+    public static int[][] grid;
+-    public static int[][] step;
++    public static boolean[][] visited;
+    public static int[] dx = {0,0,-1,1};
+    public static int[] dy = {-1,1,0,0};
+-    public static Queue<int[]> q = new LinkedList<>();
++    public static PriorityQueue<Node> pq = new PriorityQueue<>();
++    public static int time=0;
+    public static int size=2;
+    public static int eatCnt=0;
+-    public static int stepCnt=0;
+    
+    public static void main(String[] args) {
+        // 코드를 작성해주세요
+        Scanner sc = new Scanner(System.in);
+        
+        N = sc.nextInt();
+        grid = new int[N][N];
+-        step = new int[N][N];
+-        int[] cur = new int[2];
++        visited = new boolean[N][N];
++        
+        for(int i=0; i<N; i++){
+            for(int j=0; j<N; j++){
+                grid[i][j] = sc.nextInt();
+                if(grid[i][j] == 9){
+                    grid[i][j] = 0;
+-                    cur[0]=i;
+-                    cur[1]=j;
++                    visited[i][j] = true;
++                    pq.add(new Node(i, j, 0));
+                }
+            }
+        }
+        
+-        push(cur);
+        BFS();
+        
+-        System.out.println(stepCnt);
++        
++        System.out.println(time);
++        
+    }
+    
+-    
+    public static void BFS(){
+-        while(!q.isEmpty()){
+-            int[] cur = q.poll();
++        while(!pq.isEmpty()){
++            Node cur = pq.poll();
+            
+-            if(0 < grid[cur[0]][cur[1]] && grid[cur[0]][cur[1]] < size){
+-                grid[cur[0]][cur[1]] = 0;
++            if(0 < grid[cur.x][cur.y] && grid[cur.x][cur.y] < size){
+                eatCnt++;
+-                stepCnt += step[cur[0]][cur[1]];
++                
++                // System.out.println(cur.x + " " + cur.y + " " + cur.step);
++                grid[cur.x][cur.y] = 0;
++                time = cur.step;
+                if(size == eatCnt){
+                    size++;
+                    eatCnt=0;
+                }
+-                reset();
+-                push(cur);
++                
++                // 초기화
++                pq.clear();
++                visited = new boolean[N][N];
++
++                pq.add(new Node(cur.x, cur.y, 0));
++                visited[cur.x][cur.y] = true;
+            }
+            
++            
+            for(int i=0; i<4; i++){
+-                int nx = cur[0] + dx[i];
+-                int ny = cur[1] + dy[i];
++                int nx = cur.x + dx[i];
++                int ny = cur.y + dy[i];
+                if(canGo(nx, ny)){
+-                    push(new int[]{nx, ny});
+-                    step[nx][ny] = step[cur[0]][cur[1]]+1;
++                    pq.add(new Node(nx, ny, cur.step+1));
++                    visited[nx][ny] = true;
+                }
+            }
+        }
+    }
+    
+-    public static void reset(){
+-        q = new LinkedList<>();
+-        step = new int[N][N];
+-    }
+    
+    
+-    public static void push(int[] cur){
+-        if(canGo(cur[0], cur[1])){
+-            q.add(cur);
++    public static boolean check(){
++        for(int i=0; i<N; i++){
++            for(int j=0; j<N; j++){
++                if(0 < grid[i][j] && grid[i][j] < size) return true;
++            }
+        }
++        return false;
+    }
+    
++    
+    public static boolean canGo(int x, int y){
+-        if(!inRange(x, y)) return false;
+-        if(size < grid[x][y]) return false;
++        if(0>x || x>=N || 0>y || y>=N) return false;
++        if(size < grid[x][y] || visited[x][y]) return false;
+        return true;
+    }
+-    
+-    public static boolean inRange(int x, int y){
+-        return (0<=x && x<N && 0<=y && y<N);
+-    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. 최소 거리에 있는 먹이를 찾아가니까 BFS를 생각
+2. 최소 거리가 같을 경우 왼쪽 위에 있을수록 우선순위가 높으니까 PriorityQueue를 사용
+3. 먹이를 찾을 때마다 queue와 visited 초기화
