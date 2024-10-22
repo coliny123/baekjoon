@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/5464) 
 
-### 성능 요약
-
-메모리: 25608 KB, 시간: 276 ms
-
 ### 분류
 
 자료 구조, 구현, 큐, 시뮬레이션
-
-### 제출 일자
-
-2024년 10월 22일 10:24:17
 
 ### 문제 설명
 
@@ -46,3 +38,98 @@
 
  <p>출력은 반드시 표준 출력으로 하여야 하며, 하나의 줄에 한 개의 정수를 출력한다. 이 정수는 오늘 하룻동안 주차장이 벌어들인 총 수입이다.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // 코드를 작성해주세요
+        Scanner sc = new Scanner(System.in);
+        int N = sc.nextInt();
+        int M = sc.nextInt();
+        
+-        PriorityQueue<Integer> parking = new PriorityQueue<>();
+-        
++        int[] parking = new int[N];
+        int[] charges = new int[N];
+        for(int i=0; i<N; i++){
+            int charge = sc.nextInt();
+            charges[i] = charge;
+-            parking.add(i);
+        }
+        
+        int[] weight = new int[M+1];
+        for(int i=1; i<=M; i++){
+            weight[i] = sc.nextInt();
+        }
+        
+-        HashMap<Integer, Integer> map = new HashMap<>();
+        Queue<Integer> waitingQ = new LinkedList<>();
+        
+-        
+        long sum = 0;
+        for(int i=0; i<2*M; i++){
+            int t = sc.nextInt();
+            if(t>0){
+                waitingQ.add(t);
+-                if(!parking.isEmpty()){                    
+-                    int car = waitingQ.poll();
+-                    int space = parking.poll();
+-                    sum += charges[space] * weight[car];
+-                    map.put(t, space);
++                for(int j=0; j<N; j++){
++                    if(parking[j] == 0){
++                        parking[j] = waitingQ.poll();
++                        break;
++                    }
+                }
+            }
+            else{
+-                t = Math.abs(t);
+-                int outSpace = map.get(t);
+-                parking.add(outSpace);
+-                map.remove(t);
++                for(int j=0; j<N; j++){
++                    if(parking[j] == t*-1){
++                        parking[j] = 0;
++                        sum += charges[j] * weight[t*-1];
++                        break;
++                    }
++                }
++                
++                
+                if(!waitingQ.isEmpty()){
+-                    int car = waitingQ.poll();
+-                    int space = parking.poll();
+-                    sum += charges[space] * weight[car];
+-                    map.put(car, space);
++                    for(int j=0; j<N; j++){
++                        if(parking[j] == 0){
++                            parking[j] = waitingQ.poll();
++                            break;
++                        }
++                    }
+                }
++                
+            }
+        }
+        
+        System.out.println(sum);
+    }
+}
+
+// 3
+
+// 1-3, 2-2, 
+
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. N이 100이므로 주차장 배열을 완전탐색해도 된다
