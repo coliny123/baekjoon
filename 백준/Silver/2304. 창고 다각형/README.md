@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/2304) 
 
-### 성능 요약
-
-메모리: 19888 KB, 시간: 248 ms
-
 ### 분류
 
 브루트포스 알고리즘, 자료 구조, 구현, 스택
-
-### 제출 일자
-
-2024년 10월 28일 14:53:04
 
 ### 문제 설명
 
@@ -28,7 +20,7 @@
 
 <p>그림 1은 창고를 옆에서 본 모습을 그린 것이다. 이 그림에서 굵은 선으로 표시된 부분이 지붕에 해당되고, 지붕과 땅으로 둘러싸인 다각형이 창고를 옆에서 본 모습이다. 이 다각형을 창고 다각형이라고 하자.</p>
 
-<p style="text-align: center;"><img alt="" src="https://www.acmicpc.net/JudgeOnline/upload/201011/cd.png" style="height:331px; width:483px"></p>
+<p style="text-align: center;"><img alt="" src="https://onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/JudgeOnline/upload/201011/cd.png" style="height:331px; width:483px"></p>
 
 <p style="text-align: center;">그림1 . 기둥과 지붕(굵은 선)의 예</p>
 
@@ -44,3 +36,67 @@
 
  <p>첫 줄에 창고 다각형의 면적을 나타내는 정수를 출력한다.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
++import java.util.*;
++
+public class Main {
+    public static void main(String[] args) {
+        // 코드를 작성해주세요
++        Scanner sc = new Scanner(System.in);
++        
++        int N = sc.nextInt();
++        int[][] arr = new int[N][2];
++        
++        sc.nextLine();
++        int maxHight = 0;
++        for(int i=0; i<N; i++){
++            String[] input = sc.nextLine().split(" ");
++            int idx = Integer.valueOf(input[0]);
++            int high = Integer.valueOf(input[1]);
++            
++            arr[i] = new int[]{idx, high};
++            maxHight = Math.max(maxHight, high);
++        }
++        
++        Arrays.sort(arr, (o1, o2) -> (o1[0] - o2[0]));
++        
++        // left
++        long sum=0;
++        int[] lt = arr[0];
++        for(int i=1; i<N; i++){
++            if(lt[1] < arr[i][1]){
++                sum += lt[1] * (arr[i][0] - lt[0]);
++                lt = arr[i];
++                if(lt[1] == maxHight) break;
++            }
++        }
++        
++        // right
++        int[] rt = arr[N-1];
++        for(int i=N-2; i>=0; i--){
++            if(rt[1] < arr[i][1]){
++                sum += rt[1] * (rt[0] - arr[i][0]);
++                rt = arr[i];
++                if(rt[1] == maxHight) break;
++            }
++        }
++        
++        sum += (rt[0] - lt[0] + 1) * maxHight;
++        
++        System.out.println(sum);
+    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. maxHight을 찾는다.
+2. 왼쪽과 오른쪽 양쪽에서 순회하며 현재 상태의 최대값을 갱신하며 sum을 더해간다.
+3.maxHight에 도달한 경우 순회를 멈춘다.
+4. 양쪽 max의 idx를 통해 마지막 제일 높은 부분을 더한다
