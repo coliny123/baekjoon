@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/1062) 
 
-### 성능 요약
-
-메모리: 19020 KB, 시간: 412 ms
-
 ### 분류
 
 백트래킹, 비트마스킹, 브루트포스 알고리즘
-
-### 제출 일자
-
-2024년 11월 4일 10:21:15
 
 ### 문제 설명
 
@@ -28,3 +20,154 @@
 
  <p>첫째 줄에 김지민이 K개의 글자를 가르칠 때, 학생들이 읽을 수 있는 단어 개수의 최댓값을 출력한다.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+-import java.io.*;
+
+public class Main {
+-    public static int N;
+-    public static int K;
+-    public static int M;
+-    public static Set<Character> basicSet = Set.of('a', 'n', 't', 'i', 'c');
+-    public static Set<Character> inputSet = new HashSet<>();
+-    // public static Map<Character, Integer> map = new HashMap<>();
+-    public static Set<Character> answerSet = new HashSet<>();
+-    public static boolean visited [];
+-    public static String targets[];
+-    public static int max=0;
+-    
+-    
+-    public static void main(String[] args) throws IOException{
++    public static int N, K;
++    public static String[] words;
++    public static boolean[] visited;
++    public static int max = 0;
++    public static void main(String[] args) {
+        // 코드를 작성해주세요
+-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+-        String NK[] = br.readLine().split(" ");
+-        N = Integer.valueOf(NK[0]);
+-        K = Integer.valueOf(NK[1]);
+-        int t = N;
++        Scanner sc = new Scanner(System.in);
++        N = sc.nextInt();
++        K = sc.nextInt();
+        
+-        M = K-5;
+-        
+-        if(M < 0){
++        words = new String[N];
++        visited = new boolean[26];
++        if(K < 5){
+            System.out.println(0);
+            return;
+-        }else{
+-            targets = new String[N];
+-            while(t-- > 0){
+-                String row = br.readLine();
+-                String target = row.substring(4, row.length()-4);
+-                for(int i=0; i<target.length(); i++){
+-                    if(!basicSet.contains(target.charAt(i))){
+-                        inputSet.add(target.charAt(i));
+-                        // map.put(target.charAt(i), map.getOrDefault(target.charAt(i), 0)+1);
+-                    }
+-                }
+-                targets[t] = target;
+-            }
+-            visited = new boolean[inputSet.size()];
+-            
+-            BT(0);
++        }else if(K == 26){
++            System.out.println(N);
++            return;
+        }
+        
++        sc.nextLine();
++        for(int i=0; i<N; i++){
++            String input = sc.nextLine();
++            input = input.replace("anta", "");
++            input = input.replace("tica", "");
++            words[i] = input;
++        }
++        
++        visited['a' - 'a'] = true;
++        visited['c' - 'a'] = true;
++        visited['i' - 'a'] = true;
++        visited['n' - 'a'] = true;
++        visited['t' - 'a'] = true;
++        
++        BT(0, 0);
++        
+        System.out.println(max);
+-        
+    }
+    
+-    public static void BT(int depth){
+-        if(depth == M){
+-            max = Math.max(max, counting());
++    
++    public static void BT(int len, int st){
++        if(len == K-5){
++            int cnt=0;
++            for(int i=0; i<words.length; i++){
++                boolean flag = true;
++                for(int j=0; j<words[i].length(); j++){
++                    if(!visited[words[i].charAt(j) - 'a']){
++                        flag = false;
++                        break;
++                    }
++                }
++                if(flag) cnt++;
++            }
++            max = Math.max(max, cnt);
+            return;
+        }
+        
+-        int i=0;
+-        for(char a:inputSet){
++        
++        for(int i=st; i<26; i++){
+            if(!visited[i]){
+-                answerSet.add(a);
+                visited[i] = true;
+-                BT(depth+1);
++                BT(len+1, i);
+                visited[i] = false;
+-                answerSet.remove(a);
+            }
+-            i++;
+        }
+    }
+-    
+-    public static int counting(){
+-        int count=0;
+-        for(int i=0; i<N; i++){
+-            boolean flag = false;
+-            if(targets[i].length()==0){
+-                count++;
+-            }
+-            for(int j=0; j<targets[i].length(); j++){
+-                if(!basicSet.contains(targets[i].charAt(j)) && !answerSet.contains(targets[i].charAt(j))){
+-                    flag = true;
+-                    break;
+-                }
+-            }
+-            if(!flag){
+-                count++;
+-            }
+-        }
+-        return count;
+-    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. N이 최대 50이고, 알파벳이므로 26개, 글자최대가 anta, tica를 제외하면 7이라서 모든 경우의 수에 대해서 완전탐색을 진행하면 될 것 같다.
+2. visited를 알파벳 크기만큼 선언하고 'a' - 'a' 로 0~25까지를 체크한다.
