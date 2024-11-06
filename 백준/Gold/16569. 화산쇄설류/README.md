@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/16569) 
 
-### 성능 요약
-
-메모리: 23112 KB, 시간: 276 ms
-
 ### 분류
 
 너비 우선 탐색, 그래프 이론, 그래프 탐색, 구현
-
-### 제출 일자
-
-2024년 11월 7일 00:53:21
 
 ### 문제 설명
 
@@ -44,3 +36,144 @@
 
  <p>재상이가 도달할 수 있는 최고 높이와 그 높이에 도달할 수 있는 최단 시간을 공백을 구분하여 출력한다.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+import java.io.*;
+
+class Node{
+    int x, y, t, what;
+}
+
+public class Main {
+-    public static int N, M, V, X, Y, T;
+-    // public static PriorityQueue<int[]> volcano = new PriorityQueue<>((o1, o2) -> o1[2] - o2[2]);
++    public static int N, M, V, X, Y, T, MaxHigh, Time;
+    public static int[][] grid;
+    public static int[][] volcano;
++    public static boolean[][] visited;
+    public static int[] dx = {0,0,-1,1};
+    public static int[] dy = {-1,1,0,0};
+    public static TreeSet<int[]> set = new TreeSet<>((o1, o2) -> {
+        if(o1[0] == o2[0]){
+            return o1[1]-o2[1];
+        }else{
+            return o1[0]-o2[0];
+        }
+    });
+    public static Queue<int[]> q = new LinkedList<>();
+    
+    public static void main(String[] args) throws IOException{
+        // 코드를 작성해주세요
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
+        String[] input = br.readLine().split(" ");
+        N = Integer.valueOf(input[0]);
+        M = Integer.valueOf(input[1]);
+        V = Integer.valueOf(input[2]);
+        
+-        step = new int[N][M];
++        volcano = new int[N][M];
+        for(int i=0; i<N; i++){
+-            Arrays.fill(step[i], Integer.MAX_VALUE);
++            Arrays.fill(volcano[i], Integer.MAX_VALUE);
+        }
+        
+-        
++        visited = new boolean[N][M];
+        grid = new int[N][M];
+        
+        input = br.readLine().split(" ");
+        X = Integer.valueOf(input[0])-1;
+        Y = Integer.valueOf(input[1])-1;
+        
+        for(int i=0; i<N; i++){
+            input = br.readLine().split(" ");
+            for(int j=0; j<M; j++){
+                grid[i][j] = Integer.valueOf(input[j]);
+            }
+        }
+        
+        
+        while(V-- > 0){
+            input = br.readLine().split(" ");
+            int x = Integer.valueOf(input[0])-1;
+            int y = Integer.valueOf(input[1])-1;
+            int t = Integer.valueOf(input[2]);
+-            step[x][y] = t;
++            volcano[x][y] = t;
+            q.add(new int[]{x, y});
+            set.add(new int[]{x, y});
+        }
+        volcanoBFS();
+        
++        visited[X][Y] = true;
+        q.add(new int[]{X, Y, 0});
+        manBFS();
+        
+-        
++        System.out.println(MaxHigh + " " + Time);
+    }
+    
+    public static void manBFS(){
++        MaxHigh=0;
+        while(!q.isEmpty()){
+            int[] cur = q.poll();
++
++            if(MaxHigh < grid[cur[0]][cur[1]]){
++                MaxHigh = grid[cur[0]][cur[1]];
++                Time = cur[2];
++            }
+            
+            for(int i=0; i<4; i++){
+                int nx = cur[0] + dx[i];
+                int ny = cur[1] + dy[i];
+-                if(inRange(nx, ny) && volcano[nx][ny] > cur[2]){
+-                    q.add(new int[]{nx, ny});
++                if(inRange(nx, ny) && !visited[nx][ny] && volcano[nx][ny] > cur[2]+1 && !set.contains(new int[]{nx, ny})){
++                    q.add(new int[]{nx, ny, cur[2]+1});
++                    visited[nx][ny] = true;
+                }
+            }
+        }
+    }
+    
+    public static void volcanoBFS(){
+        while(!q.isEmpty()){
+            int[] cur = q.poll();
+            
+            for(int i=0; i<4; i++){
+                int nx = cur[0] + dx[i];
+                int ny = cur[1] + dy[i];
+                if(inRange(nx, ny) && volcano[nx][ny] > volcano[cur[0]][cur[1]]+1){
+                    volcano[nx][ny] = volcano[cur[0]][cur[1]]+1;
+                    q.add(new int[]{nx, ny});
+                }
+            }
+        }
+    }
+    
+    
+    public static boolean inRange(int x, int y){
+        return (0<=x && x<N && 0<=y && y<M);
+    }
+    
+    public static boolean canGo(int x, int y){
+        if(!inRange(x, y)) return false;
+        return true;
+    }
+    
+    
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. BFS를 수행하면서 시간에 따른 화산 폭발의 추가와 재만이의 이동을 어떻게 처리해야할지 감을 잡지 못했다.
+2. 답은 화산의 이동 BFS를 먼저 수행한 다음 재만이의 이동시간과 화산의 이동시간을 비교해서 재만이의 이동시간+1이 더 작은경우에만 이동하는 것이다.
+큐 두개를 사용해서 해결할수도 있지만 나는 큐 하나를 가지고 해결했다.
