@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/17250) 
 
-### 성능 요약
-
-메모리: 60164 KB, 시간: 492 ms
-
 ### 분류
 
 자료 구조, 분리 집합
-
-### 제출 일자
-
-2024년 11월 13일 13:43:04
 
 ### 문제 설명
 
@@ -42,3 +34,101 @@
 
  <p>철도가 연결될 때마다 해당 철도를 이용할 수 있는 행성들의 수를 한 줄씩 출력한다.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+import java.io.*;
+
+public class Main {
+    public static int N, K;
+    public static int[] planet;
+-    public static boolean[] visited;
+-    public static ArrayList<Integer>[] graph;
+-    public static Queue<Integer> q = new LinkedList<>();
++    public static int[] parents;
+    
+    public static void main(String[] args) throws IOException{
+        // 코드를 작성해주세요
+        
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
+        String[] input = br.readLine().split(" ");
+        N = Integer.valueOf(input[0]);
+        K = Integer.valueOf(input[1]);
+        
+-        graph = new ArrayList[N];
+        planet = new int[N];
++        parents = new int[N];
+        for(int i=0; i<N; i++){
+            planet[i] = Integer.valueOf(br.readLine());
+-            graph[i] = new ArrayList<>();
++            parents[i] = i;
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        while(K-- > 0){
+            input = br.readLine().split(" ");
+            int s = Integer.valueOf(input[0])-1;
+            int e = Integer.valueOf(input[1])-1;
+            
+-            graph[s].add(e);
+-            graph[e].add(s);
++            if(find(s) != find(e)){
++                union(s, e);
++                // System.out.println(planet[find(s)]);
++                // for(int i=0; i<N; i++){
++                    // System.out.print(planet[i] + " ");
++                // }
++                // System.out.println();
++            }
+            
+-            visited = new boolean[N];
+-            visited[s]=true;
+-            q.add(s);
+-            sb.append(BFS()).append("\n");
++            sb.append(planet[find(s)]).append("\n");
+        }
+        System.out.println(sb);
+    }
+    
+-    public static int BFS(){
+-        int sum=0;
+-        while(!q.isEmpty()){
+-            int cur = q.poll();
+-            
+-            sum += planet[cur];
+-            
+-            for(int nx : graph[cur]){
+-                if(!visited[nx]){
+-                    visited[nx] = true;
+-                    q.add(nx);
+-                }
+-            }
+-        }
+-        return sum;
++    public static int find(int x){
++        if(parents[x] == x) return x;
++        return parents[x] = find(parents[x]);
+    }
++    
++    public static void union(int x, int y){
++        x = find(x);
++        y = find(y);
++        
++        if(x == y) return;
++        parents[y] = x;
++        planet[x] += planet[y];
++    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. 실시간으로 주어지는 간선들에서 이동할 수 있는 행성의 수를 구해야하므로 BFS를 매번 돌리면 시간초과가 난다.
+ 그리고 나중에 나오는 간선은 이전에 나온 간선의 결과들을 반영하므로 되므로 Union find를 사용하면 된다.
+root에 집합의 행성들의 합을 저장해두고 union할 때마다 갱신해준다.
