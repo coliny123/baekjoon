@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/13905) 
 
-### 성능 요약
-
-메모리: 134428 KB, 시간: 680 ms
-
 ### 분류
 
 자료 구조, 분리 집합, 그래프 이론, 그래프 탐색, 최소 스패닝 트리
-
-### 제출 일자
-
-2024년 11월 14일 12:34:23
 
 ### 문제 설명
 
@@ -28,3 +20,136 @@
 
  <p>숭이의 출발위치에서 혜빈이의 위치까지 숭이가 들고 갈 수 있는 금빼빼로의 최대 개수를 출력하시오.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+import java.io.*;
+
+-class Node {
+-    int x, w;
++class Node implements Comparable<Node>{
++    int x, y, w;
+    
+-    public Node(int x, int w){
++    public Node(int x, int y, int w){
+        this.x=x;
++        this.y=y;
+        this.w=w;
+    }
++    
++    @Override
++    public int compareTo(Node o){
++        return o.w - w;
++    }
+}
+
+public class Main {
+-    public static int N, M;
++    
++    public static int[] island;
+    public static int[] weight;
+-    public static boolean[] visited;
+-    public static ArrayList<Node>[] graph;
+-    public static Queue<Integer> q = new LinkedList<>();
++    public static PriorityQueue<Node> pq = new PriorityQueue<>();
+    
+    public static void main(String[] args) throws IOException{
+        // 코드를 작성해주세요
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String[] input = br.readLine().split(" ");
+-        N = Integer.valueOf(input[0]);
+-        M = Integer.valueOf(input[1]);
+-        
+-        
++        int N = Integer.valueOf(input[0]);
++        int M = Integer.valueOf(input[1]);
+        input = br.readLine().split(" ");
+        int S = Integer.valueOf(input[0])-1;
+        int E = Integer.valueOf(input[1])-1;
+        
+-        visited = new boolean[N];
++        
++        island = new int[N];
+        weight = new int[N];
+-        graph = new ArrayList[N];
+        for(int i=0; i<N; i++){
+-            graph[i] = new ArrayList<>();
++            island[i] = i;
+        }
+        
+        while(M-- > 0){
+            input = br.readLine().split(" ");
+            int a = Integer.valueOf(input[0])-1;
+            int b = Integer.valueOf(input[1])-1;
+            int w = Integer.valueOf(input[2]);
+            
+-            graph[a].add(new Node(b, w));
+-            graph[b].add(new Node(a, w));
++            pq.add(new Node(a,b,w));
+        }
+        
+-        q.add(S);
+-        weight[S] = 1000000;
+-        BFS(E);
++        System.out.println(kruskal(S, E));
+        
+-        
+-        System.out.println(weight[E]);
+    }
+    
+-    public static void BFS(int E){
+-        while(!q.isEmpty()){
+-            int cur = q.poll();
++    
++    public static int kruskal(int S, int E){
++        int answer = 0;
++        int min=1000000;
++        while(!pq.isEmpty()){
++            Node cur = pq.poll();
++            min = Math.min(min, cur.w);
++            union(cur.x, cur.y);
+            
+-            // if(visted[cur]) continue;
+-            visited[cur] = true;
+-            
+-            for(Node nx : graph[cur]){
+-                int min = Math.min(nx.w, weight[cur]);
+-                if(!visited[nx.x] && weight[nx.x] < min){
+-                    weight[nx.x] = min;
+-                    if(nx.x != E){
+-                        q.add(nx.x);
+-                    }
+-                }
++            if(find(S) == find(E)){
++                answer = min;
++                break;
+            }
+        }
++        return answer;
+    }
++    
++    
++    public static int find(int x){
++        if(island[x] == x) return x;
++        return island[x] = find(island[x]);
++    }
++    
++    public static void union(int x, int y){
++        x = find(x);
++        y = find(y);
++        
++        if(x==y) return;
++        island[y] = x;
++    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. 다엑스트라와 BFS의 변형으로 풀어보려고 했으나 실패
+2. 최소스패닝트리를 사용해서 많이 가져갈 수 있는 다리순으로 이어간다. union을 할 때마다 S와 E가 연결되어있는지 확인하며 S와E가 연결되었을 시점의 간선중 최소값을 리턴하면된다.
