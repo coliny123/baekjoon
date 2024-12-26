@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/3079) 
 
-### 성능 요약
-
-메모리: 25912 KB, 시간: 288 ms
-
 ### 분류
 
 이분 탐색, 매개 변수 탐색
-
-### 제출 일자
-
-2024년 12월 26일 09:42:50
 
 ### 문제 설명
 
@@ -36,3 +28,71 @@
 
  <p>첫째 줄에 상근이와 친구들이 심사를 마치는데 걸리는 시간의 최솟값을 출력한다. </p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException{
+        // 코드를 작성해주세요
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String[] input = br.readLine().split(" ");
+        
+        int N = Integer.valueOf(input[0]);
+        int M = Integer.valueOf(input[1]);
+        
+-        int[] times = new int[N];
++        long[] times = new long[N];
+        for(int i=0; i<N; i++){
+-            times[i] = Integer.valueOf(br.readLine());
++            times[i] = Long.valueOf(br.readLine());
+        }
+        
+-        long answer = 0;
+        
+        long st = 1;
+-        long ed = 100000L * 1000000000L;
++        long ed = 1000000000L * 1000000000L;
++        long answer = ed;
+        
+        while(st <= ed){
+            long mid = (st + ed) / 2;
+            // System.out.println("st : " + st + " / ed : " + ed);
+            long sum = 0;
+-            for(int time : times){
+-                sum += mid / time;
++            for(long time : times){
++                sum += mid / time; // long * int => int로 계산되어 overflow 발생
++                if(sum > M){ // 1e9 * 1e9 / 2 * 1e5 가 long에서 overflow 발생하는 경우를 처리해줘야함
++                    break;
++                }
+            }
+            
+            if(sum < M){
+                st = mid + 1;
+            }else{
+                ed = mid - 1;
+                answer = mid;
+            }
+        }
+        
+        System.out.println(answer);
+        
+    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. 걸리는 시간의 최솟값을 찾아야 하고 => 최적화 문제를 "결정 문제"로 풀 수 있다. 
+2. ed의 최댓값이 1e9 * 1e9 으로 매우 큼으로 매개변수 탐색을 떠올려야함
+=> mid초일 때 각각 처리할 수 있는 인원이 < M인가를 구하면됨
+
+3. long * int => int로 계산되어 overflow가 발생하므로 long으로 배열 만들어야함
+4. sum 계산 과정에서 1e9 * 1e9 / 2 * 1e5 가 long에서 overflow 발생하는 경우를 처리해줘야함
