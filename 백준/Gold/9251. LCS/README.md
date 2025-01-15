@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/9251) 
 
-### 성능 요약
-
-메모리: 18536 KB, 시간: 140 ms
-
 ### 분류
 
 다이나믹 프로그래밍, 문자열
-
-### 제출 일자
-
-2025년 1월 15일 10:19:54
 
 ### 문제 설명
 
@@ -28,3 +20,50 @@
 
  <p>첫째 줄에 입력으로 주어진 두 문자열의 LCS의 길이를 출력한다.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+-import java.util.*;
+-import java.io.*;
+-
+-public class Main {
+-    public static void main(String[] args) throws IOException{
+-        // 코드를 작성해주세요
+-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+-        
+-        String first = br.readLine();
+-        String second = br.readLine();
+-        
+-        
+-        int[][] dp = new int[first.length()+1][second.length()+1];
+-        
+-        for(int i=1; i<=first.length(); i++){
+-            for(int j=1; j<=second.length(); j++){
+-                if(first.charAt(i-1) == second.charAt(j-1)){
+-                    dp[i][j] = dp[i-1][j-1] + 1;
+-                }else{
+-                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+-                }
+-            }
+-        }
+-        
+-        // for(int i=0; i<=first.length(); i++){
+-            // for(int j=0; j<=second.length(); j++){
+-                // System.out.print(dp[i][j] + " ");
+-            // }
+-            // System.out.println();
+-        // }
+-        
+-        System.out.println(dp[first.length()][second.length()]);
+-        
+-    }
+-}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. LCS는 2차원 DP로 판단
