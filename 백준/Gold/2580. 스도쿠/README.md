@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/2580) 
 
-### 성능 요약
-
-메모리: 25376 KB, 시간: 440 ms
-
 ### 분류
 
 백트래킹
-
-### 제출 일자
-
-2025년 1월 16일 12:38:38
 
 ### 문제 설명
 
@@ -51,3 +43,107 @@
 
 <p>스도쿠 판을 채우는 방법이 여럿인 경우는 그 중 하나만을 출력한다.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+-import java.util.*;
+-import java.io.*;
+-
+-public class Main {
+-    public static int[][] grid = new int[9][9];
+-    
+-    public static void main(String[] args) throws IOException{
+-        // 코드를 작성해주세요
+-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+-        
+-        for(int i=0; i<9; i++){
+-            String[] input = br.readLine().split(" ");
+-            for(int j=0; j<9; j++){
+-                grid[i][j] = Integer.valueOf(input[j]);
+-            }
+-        }
+-        
+-        
+-        DFS(0, 0);
+-        
+-        
+-    }
+-    
+-    
+-    public static void DFS(int x, int y){
+-        if(y == 9){
+-            DFS(x+1, 0);
+-            return;
+-        }
+-        
+-        if(x == 9){
+-            StringBuilder sb = new StringBuilder();
+-            for(int i=0; i<9; i++){
+-                for(int j=0; j<9; j++){
+-                    sb.append(grid[i][j]).append(" ");
+-                }
+-                sb.append("\n");
+-            }
+-            System.out.print(sb);
+-            System.exit(0);
+-        }
+-        
+-        if(grid[x][y] == 0){            
+-            for(int i=1; i<=9; i++){
+-                if(check(x, y, i)){
+-                    grid[x][y] = i;
+-                    DFS(x, y+1);
+-                }
+-            }
+-            grid[x][y] = 0;
+-            return;
+-        }
+-        
+-        DFS(x, y+1);
+-    }
+-    
+-    public static boolean check(int row, int col, int value){
+-        // 가로
+-        for(int i=0; i<9; i++){
+-            if(grid[row][i] == value){
+-                return false;
+-            }
+-        }
+-        
+-        // 세로
+-        for(int i=0; i<9; i++){
+-            if(grid[i][col] == value){
+-                return false;
+-            }
+-        }
+-        
+-        // 3x3
+-        int st_row = (row / 3) * 3;
+-        int st_col = (col / 3) * 3;
+-        for(int i=st_row; i<st_row+3; i++){
+-            for(int j=st_col; j<st_col+3; j++){
+-                if(grid[i][j] == value){
+-                    return false;
+-                }
+-            }
+-        }
+-        
+-        return true;
+-    }
+-    
+-    
+-}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. N퀸 처럼 bt를 사용하면 될 것이라고 생각
+2. 빈칸에 숫자를 넣을 때 가로, 세로, 3x3을 모두 확인해서 판단
+3. dfs 조건은
+3-1) 빈칸일 때 check해서 넣고 dfs, 없으면 잘못된 거니까 0으로 초기화하고 dfs 종료 시킴
+3-2) col이 9일때는 그 row를 다 돌아봤기 때문에 아래 row로 DFS함
+3-3)ROW가 9면 다 돌아봤으므로 프린트하고 종료
