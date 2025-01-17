@@ -6,7 +6,7 @@ public class Main {
         // 코드를 작성해주세요
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         
-        TreeMap<String, Integer> map = new TreeMap<>();
+        HashMap<String, Integer> map = new HashMap<>();
         
         int N = Integer.valueOf(br.readLine());
         
@@ -17,13 +17,15 @@ public class Main {
             max = Math.max(max, map.get(name));
         }
         
+        ArrayList<String> list = new ArrayList<>();
         for(String key : map.keySet()){
             if(map.get(key) == max){
-                System.out.println(key);
-                return;
+                list.add(key);
             }
         }
         
+        Collections.sort(list);
         
+        System.out.println(list.get(0));
     }
 }
