@@ -2,17 +2,9 @@
 
 [문제 링크](https://www.acmicpc.net/problem/1520) 
 
-### 성능 요약
-
-메모리: 44208 KB, 시간: 388 ms
-
 ### 분류
 
 깊이 우선 탐색, 다이나믹 프로그래밍, 그래프 이론, 그래프 탐색
-
-### 제출 일자
-
-2025년 1월 22일 20:27:13
 
 ### 문제 설명
 
@@ -34,3 +26,113 @@
 
  <p>첫째 줄에 이동 가능한 경로의 수 H를 출력한다. 모든 입력에 대하여 H는 10억 이하의 음이 아닌 정수이다.</p>
 
+
+
+#  🚀  오답노트 
+
+```diff
+import java.util.*;
+import java.io.*;
+
+class Node{
+    int x, y;
+    
+    public Node(int x, int y){
+        this.x=x;
+        this.y=y;
+    }
+}
+
+public class Main {
+    public static int N, M;
+    public static int answer=0;
+    public static int[][] grid;
+-    public static int[][] step;
++    public static int[][] dp;
+    public static int[] dx = {0,0,-1,1};
+    public static int[] dy = {-1,1,0,0};   
+    
+    public static void main(String[] args) throws IOException{
+        // 코드를 작성해주세요
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String[] input = br.readLine().split(" ");
+        
+        N = Integer.valueOf(input[0]);
+        M = Integer.valueOf(input[1]);
+        
+        grid = new int[N][M];
+-        step = new int[N][M];
++        dp= new int[N][M];
+        
+        for(int i=0; i<N; i++){
+            input = br.readLine().split(" ");
+            for(int j=0; j<M; j++){
+                grid[i][j] = Integer.valueOf(input[j]);
++                dp[i][j] = -1;
+            }
+        }
+        
+-        step[0][0]=1;
+-        DFS(0, 0);
+-        // for(int i=0; i<N; i++){
+-            // for(int j=0; j<M; j++){
+-                // System.out.print(step[i][j] + " ");
+-            // }
+-            // System.out.println();
+-        // }
+-        
+-        
+-        System.out.println(step[N-1][M-1]);
++        System.out.println(DFS(0, 0));
+    }
+    
+    public static boolean inRange(int x, int y){
+        return (0<=x && x<N && 0<=y && y<M);
+    }
+    
+-    public static void DFS(int x, int y){
++    public static int DFS(int x, int y){
++        if(x == N-1 && y == M-1){
++            return 1;
++        }
++        
++        if(dp[x][y] != -1){
++            return dp[x][y];
++        }
++        
++        dp[x][y] = 0;
+        for(int i=0; i<4; i++){
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            
+-            if(inRange(nx, ny) && grid[nx][ny] < grid[x][y]){
+-                int cnt = 0;
+-                for(int j=0; j<4; j++){
+-                    int nnx = nx + dx[j];
+-                    int nny = ny + dy[j];
+-                    if(inRange(nnx, nny) && grid[nx][ny] < grid[nnx][nny]){
+-                        cnt += step[nnx][nny];
+-                    }
+-                }
+-                if(cnt != step[nx][ny]){
+-                    step[nx][ny] = cnt;
+-                    DFS(nx, ny);
+-                }
++            if(inRange(nx, ny) && grid[x][y] > grid[nx][ny]){
++                dp[x][y] += DFS(nx, ny);
+            }
+        }
++        
++        return dp[x][y];
+    }
+}
+
+```
+
+
+ ## 🏆 전체 코멘트 
+
+1. dp + dfs 모든 경우의 수를 다 봐야하기 때문에 dfs만 하면 시간초과 생김
+2. dp 적용은 dfs에서 가지치기를 사용해서 이미 방문했으면 그 뒤에는 굳이 방문할 필요가 없음을 이용
+2-1) dp를 -1로 초기화, dp[x][y]가 초기값이 아니면 이미 방문했으므로 더 진행할 필요 없이 dp[x][y]의 값을 리턴 += 를 수행함
+2-2) 목표 지점을 도착했을 때만턴
