@@ -2,9 +2,17 @@
 
 [문제 링크](https://www.acmicpc.net/problem/2512) 
 
+### 성능 요약
+
+메모리: 16500 KB, 시간: 164 ms
+
 ### 분류
 
 이분 탐색, 매개 변수 탐색
+
+### 제출 일자
+
+2025년 1월 27일 16:16:47
 
 ### 문제 설명
 
@@ -27,66 +35,3 @@
 
  <p>첫째 줄에는 배정된 예산들 중 최댓값인 정수를 출력한다. </p>
 
-
-
-#  🚀  오답노트 
-
-```diff
-import java.util.*;
-
-public class Main {
-    public static void main(String[] args) {
-        // 코드를 작성해주세요
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int nums[] = new int[N];
-        
-        
--        int min = Integer.MAX_VALUE;
-+        // int min = Integer.MAX_VALUE;
-        int max = Integer.MIN_VALUE;
-        for(int i=0; i<N; i++){
-            nums[i] = sc.nextInt();
--            min = Math.min(min, nums[i]);
-+            // min = Math.min(min, nums[i]);
-            max = Math.max(max, nums[i]);
-        }
-        
-        int M = sc.nextInt();
-        
--        System.out.println(qarametricSearch(nums, min, max, M));
-+        System.out.println(qarametricSearch(nums, 1, max, M));
-    }
-    
-    public static int qarametricSearch(int arr[], int min, int max, int T){
-        while(min <= max){
-            int mid = (min+max)/2;
-            
-            int sum=0;
-            for(int i=0; i<arr.length; i++){
-                if(arr[i] > mid) sum += mid;
-                else sum += arr[i];
-            }
-            
--            if(sum < T){
-+            if(sum <= T){
-                min = mid+1;
-            }else{
-                max = mid-1;
-            }
-        }
-        
-        return min-1;
-    }
-}
-
-```
-
-
- ## 🏆 전체 코멘트 
-
-1. 처음엔 배열의 min, max 값을 start, end 값으로 넘겼지만 
-5
-100 100 100 100 100
-10
-처럼 M값이 min값보다 작은 경우를 처리할 수 없게 된다. 그래서 min 대신 start에 1을 넣어 mid 값을 찾았다.

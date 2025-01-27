@@ -1,43 +1,47 @@
 import java.util.*;
+import java.io.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException{
         // 코드를 작성해주세요
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int nums[] = new int[N];
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         
+        int N = Integer.valueOf(br.readLine());
         
-        // int min = Integer.MAX_VALUE;
-        int max = Integer.MIN_VALUE;
+        int[] nums = new int[N];
+        String[] input = br.readLine().split(" ");
+        int max = 0;
         for(int i=0; i<N; i++){
-            nums[i] = sc.nextInt();
-            // min = Math.min(min, nums[i]);
+            nums[i] = Integer.valueOf(input[i]);
             max = Math.max(max, nums[i]);
         }
         
-        int M = sc.nextInt();
+        Arrays.sort(nums);
         
-        System.out.println(qarametricSearch(nums, 1, max, M));
+        int M = Integer.valueOf(br.readLine());
+        
+        System.out.println(parametricSearch(1, max, M, nums));
     }
     
-    public static int qarametricSearch(int arr[], int min, int max, int T){
-        while(min <= max){
-            int mid = (min+max)/2;
-            
-            int sum=0;
-            for(int i=0; i<arr.length; i++){
-                if(arr[i] > mid) sum += mid;
-                else sum += arr[i];
+    public static int parametricSearch(int st, int ed, int maximum, int[] nums){
+        int answer = 0;
+        while(st <= ed){
+            int mid = (st + ed) / 2;
+            long sum = 0;
+            for(int req : nums){
+                if(req <= mid) sum += req;
+                else sum += mid;
             }
             
-            if(sum <= T){
-                min = mid+1;
+            // System.out.println(mid + " " + sum);
+            if(sum <= maximum){
+                st = mid + 1;
+                answer = Math.max(answer, mid);
             }else{
-                max = mid-1;
+                ed = mid - 1;
             }
         }
         
-        return min-1;
+        return answer;
     }
 }
