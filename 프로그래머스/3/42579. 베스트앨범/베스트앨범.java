@@ -1,35 +1,35 @@
 import java.util.*;
 
-
-class Gengre implements Comparable<Gengre>{
+class Genre implements Comparable<Genre>{
     int totalPlay;
-    Set<Node> songs;
+    Set<Song> songs;
     
-    public Gengre(int totalPlay, TreeSet<Node> songs){
-        this.totalPlay=totalPlay;
-        this.songs=songs;
+    public Genre(int totalPlay, TreeSet<Song> songs){
+        this.totalPlay = totalPlay;
+        this.songs = songs;
     }
     
     @Override
-    public int compareTo(Gengre x){
-        return x.totalPlay - totalPlay;
+    public int compareTo(Genre o){
+        return o.totalPlay - totalPlay;
     }
 }
 
-class Node implements Comparable<Node>{
-    int idx, play;
+class Song implements Comparable<Song>{
+    int idx;
+    int play;
     
-    public Node(int idx, int play){
+    public Song(int idx, int play){
         this.idx=idx;
         this.play=play;
     }
     
     @Override
-    public int compareTo(Node x){
-        if(play == x.play){
-            return idx - x.idx;
+    public int compareTo(Song o){
+        if(play == o.play){
+            return idx - o.idx;
         }else{
-            return x.play - play;
+            return o.play - play;
         }
     }
 }
@@ -37,33 +37,35 @@ class Node implements Comparable<Node>{
 class Solution {
     public int[] solution(String[] genres, int[] plays) {
         int[] answer = {};
-        HashMap<String, Gengre> map = new HashMap<>();
-        for(int i=0; i<genres.length; i++){
-            String genre = genres[i];
+        
+        
+        HashMap<String, Genre> map = new HashMap<>();
+        
+        for(int i = 0; i < genres.length; i++){
+            String name = genres[i];
             int play = plays[i];
             
-            Gengre target = map.getOrDefault(genre, new Gengre(0, new TreeSet<>()));
+            Genre target = map.getOrDefault(name, new Genre(0, new TreeSet<>()));
             target.totalPlay += play;
-            target.songs.add(new Node(i, play));
-            map.put(genre, target);
+            target.songs.add(new Song(i, play));
+            map.put(name, target);
         }
         
-        // Gengre 목록을 리스트로 변환하고 정렬
-        List<Gengre> genreList = new ArrayList<>(map.values());
-        Collections.sort(genreList);  // 총 재생 수 기준으로 정렬
+        List<Genre> genreList = new ArrayList<>(map.values());
+        Collections.sort(genreList);
         
         ArrayList<Integer> list = new ArrayList<>();
-        for(Gengre cur : genreList) {
-            int cnt = 0;
-            for(Node song : cur.songs) {
-                if(cnt == 2) break;  // 각 장르에서 최대 2곡 추가
-                cnt++;
+        for(Genre cur : genreList){
+            int count = 0;
+            for(Song song : cur.songs){
+                if(count == 2) break;
+                count++;
                 list.add(song.idx);
             }
         }
         
-        // 최종 결과 배열 변환
         answer = list.stream().mapToInt(i -> i).toArray();
+        
         return answer;
     }
 }
