@@ -1,25 +1,21 @@
 import java.util.*;
 import java.io.*;
 
-class Node implements Comparable<Node>{
+class Node {
     int idx, weight;
     
     public Node(int idx, int weight){
         this.idx=idx;
         this.weight=weight;
     }
-    
-    @Override
-    public int compareTo(Node o){
-        return weight - o.weight;
-    }
 }
 
 public class Main {
     static int N;
     static ArrayList<Node>[] graph;
-    static int[] dist;
     static int node = 0;
+    static int max = 0;
+    static boolean[] visited;
     
     public static void main(String[] args) throws IOException{
         // 코드를 작성해주세요
@@ -31,7 +27,6 @@ public class Main {
             graph[i] = new ArrayList<>();
         }
         
-        
         for(int i=1; i<N; i++){
             String[] input = br.readLine().split(" ");
             int st = Integer.valueOf(input[0]) - 1;
@@ -42,38 +37,32 @@ public class Main {
             graph[ed].add(new Node(st, w));
         }
         
-        dist = new int[N];
-        Arrays.fill(dist, 1000000000);
-        dijkstra(0);
+        visited = new boolean[N];
+        visited[0] = true;
+        dfs(0, 0);
+        visited[0] = false;
         
-        dist = new int[N];
-        Arrays.fill(dist, 1000000000);
-        System.out.println(dijkstra(node));
+        visited[node] = true;
+        dfs(node, 0);
+        visited[node] = false;
+        
+        System.out.println(max);
     }
     
-    static int dijkstra(int st){
-        PriorityQueue<Node> pq = new PriorityQueue<>();
-        dist[st] = 0;
-        pq.add(new Node(st, 0));
-        
-        int max = 0;
-        while(!pq.isEmpty()){
-            Node cur = pq.poll();
-            
-            if(max < dist[cur.idx]){
-                max = cur.weight;
-                node = cur.idx;
-            }
-            
-            for(int i=0; i<graph[cur.idx].size(); i++){
-                Node nx = graph[cur.idx].get(i);
-                if(dist[nx.idx] > dist[cur.idx] + nx.weight){
-                    dist[nx.idx] = dist[cur.idx] + nx.weight;
-                    pq.add(new Node(nx.idx, dist[nx.idx]));
-                }
-            }
+    static void dfs(int cur, int dist){
+        if(max < dist){
+            max = dist;
+            node = cur;
         }
         
-        return max;
+        for(int i=0; i<graph[cur].size(); i++){
+            Node nx = graph[cur].get(i);
+            if(!visited[nx.idx]){
+                visited[nx.idx] = true;
+                dfs(nx.idx, dist + nx.weight);
+                visited[nx.idx] = false;
+            }
+            
+        }
     }
 }
