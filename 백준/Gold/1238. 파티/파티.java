@@ -18,6 +18,7 @@ class Node implements Comparable<Node>{
 public class Main {
     static int N, M, X;
     static ArrayList<Node>[] graph;
+    static ArrayList<Node>[] reverseGraph;
     static int[] dist;
     
     public static void main(String[] args) throws IOException{
@@ -30,8 +31,10 @@ public class Main {
         X = Integer.valueOf(input[2]) - 1;
         
         graph = new ArrayList[N];
+        reverseGraph = new ArrayList[N];
         for(int i=0; i<N; i++){
             graph[i] = new ArrayList<>();
+            reverseGraph[i] = new ArrayList<>();
         }
         
         while(M-- > 0){
@@ -41,24 +44,26 @@ public class Main {
             int w = Integer.valueOf(input[2]);
             
             graph[st].add(new Node(ed, w));
+            reverseGraph[ed].add(new Node(st, w));
         }
         
+        // X 에서 집으로 돌아가는 그래프
         int[] sum = new int[N];
-        for(int i=0; i<N; i++){
-            if(i == X) continue;
-            dist = new int[N];
-            Arrays.fill(dist, 1000000000);
-            dijkstra(i);
-            sum[i] += dist[X];
-        }
-        
         dist = new int[N];
         Arrays.fill(dist, 1000000000);
-        dijkstra(X);
+        dijkstra(X, graph);
+        
+        for(int i=0; i<N; i++){
+            sum[i] += dist[i];
+        }
+        
+        // 반대로 바꾼 그래프(X로 오는 가중치 찾기 위함)
+        dist = new int[N];
+        Arrays.fill(dist, 1000000000);
+        dijkstra(X, reverseGraph);
         
         int max = 0;
         for(int i=0; i<N; i++){
-            if(i == X) continue;
             sum[i] += dist[i];
             max = Math.max(max, sum[i]);
         }
@@ -66,7 +71,7 @@ public class Main {
         System.out.println(max);
     }
     
-    static void dijkstra(int st){
+    static void dijkstra(int st, ArrayList<Node>[] graph){
         PriorityQueue<Node> pq = new PriorityQueue<>();
         dist[st] = 0;
         pq.add(new Node(st, 0));
