@@ -1,0 +1,26 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        // 코드를 작성해주세요
+        Scanner sc = new Scanner(System.in);
+
+        int K = sc.nextInt(); //몇번째로 큰 수 인지지
+        K = K+1;
+        StringBuilder sb = new StringBuilder();
+
+        int num = 0;
+        while(K!=0){
+            num = K%2;
+            sb.append(num);
+            K = K/2;
+        }
+        // System.out.println(sb.toString());
+        StringBuilder result = new StringBuilder();
+        for(int i=sb.toString().length()-2;i>=0;i--){
+            if(sb.charAt(i) == '0') result.append(4);
+            else result.append(7);
+        }
+        System.out.println(result.toString());
+    }
+}
