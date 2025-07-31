@@ -31,7 +31,6 @@ public class Main {
             if(steps[K] < steps[cur]) continue;
             
             if(K == cur){
-                if(steps[K] > steps[cur]) Count=1;
                 if(steps[K] == steps[cur]) Count++;
             }
             
