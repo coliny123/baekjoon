@@ -1,72 +1,73 @@
 import java.util.*;
-
-class Node implements Comparable<Node>{
-    int x, y, w;
-    
-    public Node(int x, int y, int w){
-        this.x=x;
-        this.y=y;
-        this.w=w;
-    }
-    
-    @Override
-    public int compareTo(Node o){
-        return w - o.w;
-    }
-}
+import java.io.*;
 
 public class Main {
-    public static int N, M;
-    public static int[] house;
-    public static PriorityQueue<Node> pq = new PriorityQueue<>();
+    static int N, M;
+    static int[] parents;
     
-    public static void main(String[] args) {
+    static PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> {
+        return a[2] -b[2];
+    });
+    
+    
+    public static void main(String[] args) throws IOException{
         // 코드를 작성해주세요
-        Scanner sc = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         
-        N = sc.nextInt();
-        M = sc.nextInt();
+        String[] input = br.readLine().split(" ");
         
-        house = new int[N];
+        N = Integer.valueOf(input[0]);
+        M = Integer.valueOf(input[1]);
         
-        for(int i=0; i<N; i++){
-            house[i] = i;
+        parents = new int[N];
+        
+        for(int i=0; i<N; i++) {
+            parents[i] = i;
         }
         
-        while(M-- > 0){
-            int a = sc.nextInt()-1;
-            int b = sc.nextInt()-1;
-            int w = sc.nextInt();
+        for(int i=0; i<M; i++){
+            input = br.readLine().split(" ");
             
-            pq.add(new Node(a,b,w));
+            int st = Integer.valueOf(input[0]) - 1;
+            int ed = Integer.valueOf(input[1]) - 1;
+            int dist = Integer.valueOf(input[2]);
+            
+            pq.add(new int[]{st, ed, dist});
         }
         
-        int mini = 0;
-        int maxW = 0;
+        int max = 0;
+        long sum = 0;
         while(!pq.isEmpty()){
-            Node cur = pq.poll();
+            int[] load = pq.poll();
+            int a = load[0];
+            int b = load[1];
+            int dist = load[2];
             
-            if(find(cur.x) != find(cur.y)){
-                mini += cur.w;
-                union(cur.x, cur.y);
-                maxW = cur.w;
+            if(find(a) != find(b)){
+                union(a, b);
+                sum += dist;
+                
+                max = Math.max(max, dist);
             }
         }
-
-        System.out.println(mini - maxW);
+        
+        
+        System.out.println(sum - max);
     }
     
+    
     public static int find(int x){
-        if(house[x] == x) return x;
-        return house[x] = find(house[x]);
+        if(parents[x] == x) return x;
+        return parents[x] = find(parents[x]);
     }
+    
     
     public static void union(int x, int y){
         x = find(x);
         y = find(y);
         
-        if(x==y) return;
-        house[y] = x;
+        if(x == y) return;
+        
+        parents[y] = x;
     }
-    
 }
