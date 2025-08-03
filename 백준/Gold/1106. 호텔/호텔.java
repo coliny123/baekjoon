@@ -11,7 +11,7 @@ public class Main {
         int N = Integer.valueOf(input[1]);
         
         int[] dp = new int[C+101];
-        Arrays.fill(dp,987654321);
+        Arrays.fill(dp, 10000000);
         dp[0] = 0;
         for(int i=0; i<N; i++){
             input = br.readLine().split(" ");
@@ -19,7 +19,7 @@ public class Main {
             int people = Integer.valueOf(input[1]);
             
             for(int j=people; j <= C+100; j++){
-                dp[j] = Math.min(dp[j], dp[j - people] + cost);
+                dp[j] = Math.min(dp[j], dp[j-people] + cost);
             }
         }
         
