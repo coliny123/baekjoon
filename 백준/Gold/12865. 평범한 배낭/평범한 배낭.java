@@ -35,9 +35,8 @@ public class Main {
         Arrays.sort(things);
         
         for(int i=0; i<N; i++){
-            for(int weight=K; weight>=0; weight--){
-                Node cur = things[i];
-                if(weight < cur.w) break;
+            Node cur = things[i];
+            for(int weight=K; weight>=cur.w; weight--){
                 bags[weight] = Math.max(bags[weight], bags[weight-cur.w] + cur.v);
             }
         }
