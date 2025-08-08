@@ -8,7 +8,7 @@ public class Main {
         public int fuel;
 
         @Override
-        public int compareTo(Car o) {//Arrays.sort를 위해
+        public int compareTo(Car o) {
             return pos - o.pos;
         }
     }
@@ -21,7 +21,7 @@ public class Main {
         int S = Integer.parseInt(st.nextToken());
         
         Car[] cars = new Car[N];
-        boolean[] visit = new boolean[N+1];
+        boolean[] visit = new boolean[N];
         
         st = new StringTokenizer(bf.readLine());
         for (int i = 0; i < N; i++) {
@@ -35,9 +35,9 @@ public class Main {
             cars[i].fuel = Integer.parseInt(st.nextToken());
         }
         
-        
         Arrays.sort(cars);
         
+        // 시작 자동차의 인덱스 찾기
         int startIdx = -1;
         for(int i = 0; i < N; i++){
             if(cars[i].index == S){
@@ -46,41 +46,61 @@ public class Main {
             }
         }
         
+        // 투포인터 초기화
+        int left = startIdx;
+        int right = startIdx;
+        visit[startIdx] = true;
         
-        Queue<Integer> q = new LinkedList<>();
-        q.add(S-1);
-        visit[cars[S-1].index] = true;
+        // 현재 도달 가능한 범위
+        int leftBound = cars[startIdx].pos - cars[startIdx].fuel;
+        int rightBound = cars[startIdx].pos + cars[startIdx].fuel;
         
+        boolean expanded = true;
         
-        while(!q.isEmpty()){
-            int now = q.poll();
+        while(expanded) {
+            expanded = false;
             
-            // 왼
-            for(int i = now; i >= 0; i--){
-                if(cars[i].pos < cars[now].pos - cars[now].fuel) break;
-                 
-                if(!visit[cars[i].index]){
-                    q.add(i);
-                    visit[cars[i].index] = true;
+            // 왼쪽으로 확장
+            while(left > 0 && cars[left-1].pos >= leftBound) {
+                left--;
+                if(!visit[left]) {
+                    visit[left] = true;
+                    int newLeftBound = cars[left].pos - cars[left].fuel;
+                    if(newLeftBound < leftBound) {
+                        leftBound = newLeftBound;
+                        expanded = true;
+                    }
+                    int newRightBound = cars[left].pos + cars[left].fuel;
+                    if(newRightBound > rightBound) {
+                        rightBound = newRightBound;
+                        expanded = true;
+                    }
                 }
             }
             
-            // 오
-            for(int i = now; i < N; i++){
-                if(cars[i].pos > cars[now].pos + cars[now].fuel) break;
-                 
-                if(!visit[cars[i].index]){
-                    q.add(i);
-                    visit[cars[i].index] = true;
+            // 오른쪽으로 확장
+            while(right < N-1 && cars[right+1].pos <= rightBound) {
+                right++;
+                if(!visit[right]) {
+                    visit[right] = true;
+                    int newLeftBound = cars[right].pos - cars[right].fuel;
+                    if(newLeftBound < leftBound) {
+                        leftBound = newLeftBound;
+                        expanded = true;
+                    }
+                    int newRightBound = cars[right].pos + cars[right].fuel;
+                    if(newRightBound > rightBound) {
+                        rightBound = newRightBound;
+                        expanded = true;
+                    }
                 }
             }
         }
         
-        
         StringBuilder sb = new StringBuilder();
-        for(int i = 1; i < N+1; i++){
+        for(int i = 0; i < N; i++){
             if(visit[i]){
-                sb.append(i).append(" ");
+                sb.append(cars[i].index).append(" ");
             }
         }
         System.out.println(sb);
