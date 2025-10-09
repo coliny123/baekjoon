@@ -1,75 +1,76 @@
 import java.util.*;
+import java.io.*;
 
-class Node implements Comparable<Node> {
-    int x, y, w;
+class Node implements Comparable<Node>{
+    int st, ed, w;
     
-    public Node(int x, int y, int w){
-        this.x=x;
-        this.y=y;
+    public Node(int st, int ed, int w){
+        this.st=st;
+        this.ed=ed;
         this.w=w;
     }
     
     @Override
     public int compareTo(Node o){
-        return w - o.w;
+        return this.w - o.w;
     }
+    
 }
 
 public class Main {
-    public static int N, M;
-    public static int[] computers;
-    public static PriorityQueue<Node> pq = new PriorityQueue<>();
+    static PriorityQueue<Node> pq = new PriorityQueue<>();
+    static int[] parents;
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException{
         // 코드를 작성해주세요
-        Scanner sc = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         
-        N = sc.nextInt();
-        M = sc.nextInt();
-        computers = new int[N];
+        int N = Integer.valueOf(br.readLine());
         
-        // 초기화
+        parents = new int[N];
         for(int i=0; i<N; i++){
-            computers[i] = i;
+            parents[i] = i;
         }
         
-        for(int i=0; i<M; i++){
-            int a = sc.nextInt()-1;
-            int b = sc.nextInt()-1;
-            int w = sc.nextInt();
+        int M = Integer.valueOf(br.readLine());
+        
+        while(M-- > 0){
+            String[] input = br.readLine().split(" ");
             
-            pq.add(new Node(a,b,w));
+            int st = Integer.valueOf(input[0]) - 1;
+            int ed = Integer.valueOf(input[1]) - 1;
+            int w = Integer.valueOf(input[2]);
+            
+            pq.add(new Node(st, ed, w));
         }
         
-        
-        System.out.println(kruskal());
-        
-    }
-    
-    public static int kruskal(){
-        int mini=0;
+        int sum = 0;
         while(!pq.isEmpty()){
             Node cur = pq.poll();
             
-            if(find(cur.x) != find(cur.y)){
-                mini += cur.w;
-                union(cur.x, cur.y);
+            if(find(cur.st) != find(cur.ed)){
+                sum += cur.w;
+                union(cur.st, cur.ed);
             }
         }
         
-        return mini;
+        
+        System.out.println(sum);
     }
     
-    public static int find(int x){
-        if(computers[x] == x) return x;
-        return computers[x] = find(computers[x]);
+    
+    
+    static int find(int x){
+       	if(parents[x] == x) return x; 
+       	return parents[x] = find(parents[x]);
     }
     
-    public static void union(int x, int y){
+    static void union(int x, int y){
         x = find(x);
         y = find(y);
         
-        if(x==y) return;
-        computers[y] = x;
+        if(x == y) return;
+        
+        parents[y] = x;
     }
 }
